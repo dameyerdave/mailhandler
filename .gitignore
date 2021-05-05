@@ -8,3 +8,6 @@ mailhandler.yml
 # Database
 db/*
 !db/.gitkeep
+
+# docker override
+docker-compose.override.yml
