@@ -12,7 +12,8 @@ class Smtp():
     def connect(self):
         try:
             self.smtp_server = smtplib.SMTP(self.host, self.port)
-            self.smtp_server.starttls()
+            if self.ssl:
+                self.smtp_server.starttls()
             self.smtp_server.login(self.user, self.password)
         except Exception as ex:
             raise ex
