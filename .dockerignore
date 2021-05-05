@@ -1,0 +1,9 @@
+db/*
+!db
+.gitignore
+.git
+.envrc
+.vscode
+
+Dockerfile
+docker-compose.yml

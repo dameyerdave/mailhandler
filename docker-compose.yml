@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  mailhandler:
+    build:
+      context: .
+    hostname: mailhandler
+    volumes:
+      - '/data/virology/mailattachments:/store'
+    restart: unless-stopped
+    env_file: .env

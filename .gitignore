@@ -1,0 +1,10 @@
+# Environment
+.env
+.envrc
+
+# Configuration
+mailhandler.yml
+
+# Database
+db/*
+!db/.gitkeep

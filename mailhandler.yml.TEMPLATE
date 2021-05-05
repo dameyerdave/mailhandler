@@ -1,0 +1,31 @@
+rules:
+  - name: "Move emails from subscription list"
+    filter: UNSEEN
+    process:
+      - if_content: (Unsubscribe|unsubscribe|UNSUBSCRIBE|afmelde|Cancellati)
+        actions:
+          - move: MailingList
+    links:
+      handle: true
+      process:
+        - if_content: unsubscribe
+          actions:
+            - move: MailingList
+    raw:
+      handle: true
+      process:
+        - if_content: (Unsubscribe|unsubscribe|UNSUBSCRIBE|afmelde|Cancellati|kliknij tutaj)
+          actions:
+            - move: MailingList
+  - name: "process mails"
+    filter: FROM email@gmail.com SUBJECT "My Subject"
+    attachments:
+      handle: true
+      process:
+        - if_content: some content
+          actions:
+            - forward: other@gmail.com
+        - always:
+          actions:
+            - store: /store
+            - move: Mailbox

@@ -1,0 +1,6 @@
+version: "3.5"
+services:
+  mailhandler:
+    volumes:
+      - '/Users/davmeyer/Downloads/mails:/store'
+
