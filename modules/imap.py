@@ -35,10 +35,11 @@ class Imap():
     def listMailboxes(self):
         response_code, folders = self.imap_server.list()
         if response_code == 'OK':
+            print('Mailboxes:')
             for folder_details_raw in folders:
                 folder_details = folder_details_raw.decode(
                     'utf-8', errors='ignore').split()
-            print(f'- {folder_details[-1]}')
+                print(f'- {folder_details[-1]}')
         else:
             raise Exception('Response code is {response_code}')
 
