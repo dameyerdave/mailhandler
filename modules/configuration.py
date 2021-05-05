@@ -31,6 +31,9 @@ class Configuration():
         except Exception as ex:
             raise ParseError(ex)
 
+    def has_rules(self):
+        return 'rules' in self.__config
+
     def rules(self):
         if 'rules' not in self.__config:
             raise NotParsedError(

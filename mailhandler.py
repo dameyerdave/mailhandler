@@ -52,7 +52,7 @@ def main():
             'SMTP_USER'), env('SMTP_PASSWORD'), env.bool('SMTP_SSL'))
         smtp.connect()
 
-        if 'rules' in configuration:
+        if configuration.has_rules():
             for rule in configuration.rules():
                 log.info(f"Applying rule '{rule.name}'...")
                 stats = {
