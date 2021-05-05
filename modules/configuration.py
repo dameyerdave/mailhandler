@@ -1,5 +1,6 @@
 import yaml
 from pydotdict import DotDict
+from os.path import exists
 
 
 class ParseError(Exception):
@@ -24,8 +25,9 @@ class Configuration():
         Parses the yaml config file into the internal config variable
         """
         try:
-            with open(self.config_file, 'r') as f:
-                self.__config = yaml.load(f, Loader=yaml.FullLoader)
+            if exists(self.config_file):
+                with open(self.config_file, 'r') as f:
+                    self.__config = yaml.load(f, Loader=yaml.FullLoader)
         except Exception as ex:
             raise ParseError(ex)
 
