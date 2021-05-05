@@ -44,65 +44,68 @@ def main():
 
         bookKeeper = BookKeeper('bookkeeping.db')
 
-        imap = Imap(env('IMAP_HOST'), env('IMAP_PORT'), env('IMAP_USER'), env('IMAP_PASSWORD'))
+        imap = Imap(env('IMAP_HOST'), env.int('IMAP_PORT'), env('IMAP_USER'), env('IMAP_PASSWORD'), env.bool('IMAP_SSL'))
         imap.connect()
         imap.select()
 
         smtp = Smtp(env('SMTP_HOST'), env.int('SMTP_PORT'), env(
-            'SMTP_USER'), env('SMTP_PASSWORD'))
+            'SMTP_USER'), env('SMTP_PASSWORD'), env.bool('SMTP_SSL'))
         smtp.connect()
 
-        for rule in configuration.rules():
-            log.info(f"Applying rule '{rule.name}'...")
-            stats = {
-                'rule': rule.name,
-                'processed': 0,
-            }
-            for msg in imap.filter(rule.filter):
-                mailid = int(msg.get('id'))
-                stats['processed'] += 1
-                if options.disable_bookkeeping or not bookKeeper.is_tracked(mailid):
-                    log.info(
-                        f"Handling message {mailid} | {msg.get('subject')} | {msg.get('from')}...")
-                    if 'process' in rule:
-                        mailProcessor = MailProcessor(
-                            rule.process, imap, msg, temp_folder)
-                        mailProcessor.process()
-
-                    if 'raw' in rule:
-                        if 'process' in rule.raw:
-                            mailProcessor = RawProcessor(
-                                rule.raw.process, imap, msg, temp_folder)
+        if 'rules' in configuration:
+            for rule in configuration.rules():
+                log.info(f"Applying rule '{rule.name}'...")
+                stats = {
+                    'rule': rule.name,
+                    'processed': 0,
+                }
+                for msg in imap.filter(rule.filter):
+                    mailid = int(msg.get('id'))
+                    stats['processed'] += 1
+                    if options.disable_bookkeeping or not bookKeeper.is_tracked(mailid):
+                        log.info(
+                            f"Handling message {mailid} | {msg.get('subject')} | {msg.get('from')}...")
+                        if 'process' in rule:
+                            mailProcessor = MailProcessor(
+                                rule.process, imap, msg, temp_folder)
                             mailProcessor.process()
 
-                    if 'attachments' in rule:
-                        if 'handle' in rule.attachments and rule.attachments.handle:
-                            if 'process' in rule.attachments:
-                                attachments = msg.get('attachments')
-                                attachmentProcessor = AttachmentProcessor(
-                                    rule.attachments.process, imap, msg, attachments, temp_folder)
-                                attachmentProcessor.process()
+                        if 'raw' in rule:
+                            if 'process' in rule.raw:
+                                mailProcessor = RawProcessor(
+                                    rule.raw.process, imap, msg, temp_folder)
+                                mailProcessor.process()
 
-                    if 'links' in rule:
-                        if 'handle' in rule.links and rule.links.handle:
-                            if 'process' in rule.links:
-                                links = msg.get('links')
-                                pprint(links)
-                                linkProcessor = LinkProcessor(
-                                    rule.links.process, imap, msg, links, temp_folder)
-                                linkProcessor.process()
+                        if 'attachments' in rule:
+                            if 'handle' in rule.attachments and rule.attachments.handle:
+                                if 'process' in rule.attachments:
+                                    attachments = msg.get('attachments')
+                                    attachmentProcessor = AttachmentProcessor(
+                                        rule.attachments.process, imap, msg, attachments, temp_folder)
+                                    attachmentProcessor.process()
 
-                    if not options.disable_bookkeeping:
-                        bookKeeper.track(mailid, msg.get(
-                            'subject'), msg.get('from'), msg.get('to'))
-                else:
-                    log.warning(
-                        f"Message already handled: {mailid} | {msg.get('subject')} | {msg.get('from')}")
-            fwd_ret = MailForwardQueue.forwardAll(imap, smtp)
-            del_ret = MailDeleteQueue.deleteAll(imap)
-            pprint(stats)
-            pprint(fwd_ret)
-            pprint(del_ret)
+                        if 'links' in rule:
+                            if 'handle' in rule.links and rule.links.handle:
+                                if 'process' in rule.links:
+                                    links = msg.get('links')
+                                    pprint(links)
+                                    linkProcessor = LinkProcessor(
+                                        rule.links.process, imap, msg, links, temp_folder)
+                                    linkProcessor.process()
+
+                        if not options.disable_bookkeeping:
+                            bookKeeper.track(mailid, msg.get(
+                                'subject'), msg.get('from'), msg.get('to'))
+                    else:
+                        log.warning(
+                            f"Message already handled: {mailid} | {msg.get('subject')} | {msg.get('from')}")
+                fwd_ret = MailForwardQueue.forwardAll(imap, smtp)
+                del_ret = MailDeleteQueue.deleteAll(imap)
+                pprint(stats)
+                pprint(fwd_ret)
+                pprint(del_ret)
+        else:
+          imap.listMailboxes()
 
         imap.destroy()
         smtp.destroy()

@@ -8,15 +8,19 @@ from sys import stdout
 
 
 class Imap():
-    def __init__(self, host, port, user, password):
+    def __init__(self, host, port, user, password, ssl=True):
         self.host = host
         self.port = port
         self.user = user
         self.password = password
+        self.ssl = ssl
 
     def connect(self):
         try:
-            self.imap_server = imaplib.IMAP4_SSL(host=self.host, port=self.port)
+            if self.ssl:
+                self.imap_server = imaplib.IMAP4_SSL(host=self.host, port=self.port)
+            else:
+                self.imap_server = imaplib.IMAP4(host=self.host, port=self.port)
             self.imap_server.login(self.user, self.password)
         except Exception as ex:
             raise ex

@@ -2,11 +2,12 @@ import smtplib
 
 
 class Smtp():
-    def __init__(self, host, port, user, password):
+    def __init__(self, host, port, user, password, ssl=True):
         self.host = host
         self.port = port
         self.user = user
         self.password = password
+        self.ssl = ssl
 
     def connect(self):
         try:
