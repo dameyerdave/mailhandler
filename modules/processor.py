@@ -1,5 +1,5 @@
 from pprint import pprint
-from modules.action import DeleteAction, ForwardAction, MoveAction, StoreAction
+from modules.action import DeleteAction, ForwardAction, MoveAction, StoreAction, VisitAction
 import textract
 import re
 from os.path import join, isfile, splitext
@@ -32,6 +32,8 @@ class ProcessorBase():
                 MoveAction(action_config).execute()
             if 'delete' in action:
                 DeleteAction(action_config).execute()
+            if 'visit' in action:
+                VisitAction(action_config).execute()
 
     def process_rules(self, content, **kwargs):
         for process in self.__process_config:
@@ -96,9 +98,13 @@ class LinkProcessor(ProcessorBase):
         log.debug(f"Processing {self.__class__.__name__}...")
         if self.links:
             for link in self.links:
-                log.info(f"Handling link '{link}''...")
-                self.process_rules(
-                    link)
+                if link:
+                    match = re.search(r'.*(?P<link>http(s)?:\/\/.+)', link)
+                    if match:
+                        link = match.group('link')
+                        log.info(f"Handling link '{link}''...")
+                        self.process_rules(
+                            link, link=link)
 
 
 class AttachmentProcessor(ProcessorBase):

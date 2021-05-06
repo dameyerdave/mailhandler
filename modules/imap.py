@@ -7,6 +7,7 @@ from friendlylog import colored_logger as log
 from sys import stdout
 
 
+
 class Imap():
     def __init__(self, host, port, user, password, ssl=True):
         self.host = host

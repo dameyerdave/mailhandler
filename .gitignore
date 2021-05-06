@@ -11,3 +11,6 @@ db/*
 
 # docker override
 docker-compose.override.yml
+
+# Python
+__pycache__

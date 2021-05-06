@@ -2,6 +2,7 @@ from friendlylog import colored_logger as log
 import shutil
 from os.path import join
 from modules.queues import MailDeleteQueue, MailForwardQueue
+from urllib.request import urlopen
 
 
 class ActionBase():
@@ -10,6 +11,20 @@ class ActionBase():
 
     def execute(self):
         raise NotImplementedError('execute is not implemented')
+
+
+class VisitAction(ActionBase):
+    def __init__(self, action_config):
+        super().__init__(action_config)
+    
+    def execute(self):
+        if 'visit' in self.action_config:
+            if self.action_config['visit']:
+                if 'link' in self.action_config:
+                    link = self.action_config['link']
+                    log.info(f"Visiting link '{link}'")
+                    resp = urlopen(link)
+                    log.debug(f"Response: {resp.getcode()}")
 
 
 class MoveAction(ActionBase):
