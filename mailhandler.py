@@ -88,7 +88,6 @@ def main():
                             if 'handle' in rule.links and rule.links.handle:
                                 if 'process' in rule.links:
                                     links = msg.get('links')
-                                    pprint(links)
                                     linkProcessor = LinkProcessor(
                                         rule.links.process, imap, msg, links, temp_folder)
                                     linkProcessor.process()

@@ -1,4 +1,3 @@
-from pprint import pprint
 from modules.action import DeleteAction, ForwardAction, MoveAction, StoreAction, VisitAction
 import textract
 import re
