@@ -16,15 +16,19 @@ class ActionBase():
 class VisitAction(ActionBase):
     def __init__(self, action_config):
         super().__init__(action_config)
-    
+
     def execute(self):
         if 'visit' in self.action_config:
             if self.action_config['visit']:
                 if 'link' in self.action_config:
                     link = self.action_config['link']
                     log.info(f"Visiting link '{link}'")
-                    resp = urlopen(link)
-                    log.debug(f"Response: {resp.getcode()}")
+                    try:
+                        resp = urlopen(link)
+                        log.debug(f"Response: {resp.getcode()}")
+                    except Exception as ex:
+                        log.warning(f"Visit link error: {ex}")
+                        pass
 
 
 class MoveAction(ActionBase):

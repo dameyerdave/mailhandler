@@ -33,12 +33,12 @@ class BookKeeper():
             traceback.print_exc(file=stdout)
 
     def track(self, mailid: int, subject: str, _from: str, _to: str):
-        subject = re.sub(r"'", '', subject)
-        _from = re.sub(r"'", '', _from)
+        subject = re.sub(r"['\"]", '', subject)
+        _from = re.sub(r"['\"]", '', _from)
         sql = f"""INSERT INTO mails (mailid, subject, _from, _to) VALUES (
               {mailid}, "{subject}", "{_from}", '{_to}'
             )"""
-        # log.debug(f"sql: {sql}")
+        log.debug(f"sql: {sql}")
         self.cursor.execute(
             f"""INSERT INTO mails (mailid, subject, _from, _to) VALUES (
               {mailid}, "{subject}", '{_from}', '{_to}'
