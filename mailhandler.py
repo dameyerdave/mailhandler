@@ -44,7 +44,8 @@ def main():
 
         bookKeeper = BookKeeper('bookkeeping.db')
 
-        imap = Imap(env('IMAP_HOST'), env.int('IMAP_PORT'), env('IMAP_USER'), env('IMAP_PASSWORD'), env.bool('IMAP_SSL'))
+        imap = Imap(env('IMAP_HOST'), env.int('IMAP_PORT'), env(
+            'IMAP_USER'), env('IMAP_PASSWORD'), env.bool('IMAP_SSL'))
         imap.connect()
         imap.select()
 
@@ -104,7 +105,7 @@ def main():
                 pprint(fwd_ret)
                 pprint(del_ret)
         else:
-          imap.listMailboxes()
+            imap.listMailboxes()
 
         imap.destroy()
         smtp.destroy()

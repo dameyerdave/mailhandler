@@ -51,7 +51,7 @@ class ProcessorBase():
                             log.debug(
                                 f"Pattern '{regex}' not found in content")
                     else:
-                        log.debug(f"Content is None")
+                        log.debug("Content is None")
             if 'always' in process:
                 if 'actions' in process:
                     log.info(
